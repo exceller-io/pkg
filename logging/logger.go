@@ -41,10 +41,10 @@ func LoggerFromContext(ctx context.Context) *zap.SugaredLogger {
 }
 
 //NewLogger returns a new instance of logger
-func NewLogger(levelOverride string, opts ...zap.Option) (*zap.SugaredLogger, zap.AtomicLevel) {
+func NewLogger(level string, opts ...zap.Option) (*zap.SugaredLogger, zap.AtomicLevel) {
 	loggingCfg := zap.NewProductionConfig()
-	if len(levelOverride) > 0 {
-		if level, err := levelFromString(levelOverride); err == nil {
+	if len(level) > 0 {
+		if level, err := levelFromString(level); err == nil {
 			loggingCfg.Level = zap.NewAtomicLevelAt(*level)
 		}
 	}
