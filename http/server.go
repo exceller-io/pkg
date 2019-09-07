@@ -38,8 +38,8 @@ type server struct {
 	certFile, keyFile string
 }
 
-//New creates a new instance of http server
-func New(addr string, tls bool, certFile, keyFile string, routes Routes) Server {
+//NewServer creates a new instance of http server
+func NewServer(addr string, tls bool, certFile, keyFile string, routes Routes) Server {
 	handler := NewRouter(routes)
 
 	return &server{
