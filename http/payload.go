@@ -49,7 +49,7 @@ type RequestReader interface {
 //ResponseReadWriter response read writer
 type ResponseReadWriter interface {
 	WriteResponse(contentType string, status int, data interface{}, w http.ResponseWriter)
-	ReadResponse(data interface{}, response *http.Response) error
+	ReadResponse(contentType string, data interface{}, response *http.Response) error
 }
 
 type payloadImpl struct {
@@ -88,7 +88,7 @@ func (p *payloadImpl) WriteResponse(contentType string, status int, data interfa
 	}
 }
 
-func (p *payloadImpl) ReadResponse(data interface{}, response *http.Response) error {
+func (p *payloadImpl) ReadResponse(contentType string, data interface{}, response *http.Response) error {
 	fmt.Println("Reading response body")
 	defer response.Body.Close()
 
@@ -97,10 +97,29 @@ func (p *payloadImpl) ReadResponse(data interface{}, response *http.Response) er
 		fmt.Printf("Error reading response from GitHub API call %v", err)
 		return err
 	}
-	if err = json.Unmarshal(payload, &data); err != nil {
-		fmt.Printf("Error unmarshalling golang struct")
-		return err
+	switch contentType {
+	case ContentTypeJSON:
+		if err = json.Unmarshal(payload, &data); err != nil {
+			fmt.Printf("Error unmarshalling payload")
+			return err
+		}
+		break
+	case ContentTypeXML:
+		if err = xml.Unmarshal(payload, &data); err != nil {
+			fmt.Printf("Error unmarshalling payload")
+			return err
+		}
+		break
+	case ContentTypeYaml:
+		if err = yaml.Unmarshal(payload, &data); err != nil {
+			fmt.Printf("Error unmarshalling payload")
+			return err
+		}
+		break
+	default:
+		fmt.Printf("Unknown content type: %s", contentType)
 	}
+
 	return nil
 }
 
