@@ -34,14 +34,14 @@ func NewRouter(routes Routes) *mux.Router {
 			Handler(route.HandlerFunc)
 	}
 
-	//add health handler
+	//add health route
 	router.
 		Methods("GET").
 		Path("/health").
 		Name("health").
 		Handler(healthHandler())
 
-	//add metrics endpoint
+	//add metrics route
 	router.
 		Methods("GET").
 		Path("metrics").

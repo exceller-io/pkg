@@ -91,3 +91,27 @@ func postHandler() http.HandlerFunc {
     }
 }
 ```
+
+#### Write to Response
+Another common thing you often find yourself especially when implementing APIs you'll need to write some JSON, YAML or XML data to response. Simple example below demonstrates just that. Lets image we have a Get Handler for one of the routes supported by server
+
+```
+type SomeModel struct {
+    //fields
+}
+
+func getHandler() http.HandlerFunc {
+    return func (w http.ResponseWriter, r *http.Request) {
+        var model SomeModel
+
+        //retrieve data from DB
+
+        //Setup your model
+
+        //Write to response
+        p := ws.NewPayload()
+        err := p.WriteResponse(ws.ContentTypeJSON, http.StatusOK, &mode, w)
+    }
+}
+
+```
