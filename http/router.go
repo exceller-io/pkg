@@ -15,7 +15,12 @@
 // =========================================================================
 package http
 
-import "github.com/gorilla/mux"
+import (
+	"net/http"
+
+	"github.com/appsbyram/pkg/metrics"
+	"github.com/gorilla/mux"
+)
 
 //NewRouter initializes new instance of mux.Router
 func NewRouter(routes Routes) *mux.Router {
@@ -29,5 +34,33 @@ func NewRouter(routes Routes) *mux.Router {
 			Handler(route.HandlerFunc)
 	}
 
+	//add health handler
+	router.
+		Methods("GET").
+		Path("/health").
+		Name("health").
+		Handler(healthHandler())
+
+	//add metrics endpoint
+	router.
+		Methods("GET").
+		Path("metrics").
+		Name("metrics").
+		Handler(metrics.PrometheusHandler())
 	return router
+}
+
+//HealthReport represents a health report
+type HealthReport struct {
+	Status string `json:"status" yaml:"status"`
+}
+
+func healthHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		report := HealthReport{
+			Status: "UP",
+		}
+		p := NewPayload()
+		p.WriteResponse(ContentTypeJSON, http.StatusOK, report, w)
+	}
 }

@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 )
 
@@ -57,7 +56,7 @@ type payloadImpl struct {
 }
 
 //NewPayload initializes a new payload
-func NewPayload(log *zap.SugaredLogger) Payload {
+func NewPayload() Payload {
 	return &payloadImpl{}
 }
 
