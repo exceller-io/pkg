@@ -28,7 +28,6 @@ import (
 //Server base http server
 type Server interface {
 	Start()
-	WaitShutdown()
 }
 
 type server struct {
@@ -89,7 +88,7 @@ func (s *server) waitShutdown() {
 		fmt.Printf("Shutdown request (signal: %v)", sig)
 	}
 
-	fmt.Printf("Stoping http server ...")
+	fmt.Printf("Stopping server ...")
 
 	//Create shutdown context with 10 second timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
