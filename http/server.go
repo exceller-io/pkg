@@ -72,14 +72,14 @@ func (s *server) Start() {
 	}()
 
 	//wait shutdown
-	s.WaitShutdown()
+	s.waitShutdown()
 
 	<-done
 	fmt.Printf("DONE!")
 
 }
 
-func (s *server) WaitShutdown() {
+func (s *server) waitShutdown() {
 	irqSig := make(chan os.Signal, 1)
 	signal.Notify(irqSig, syscall.SIGINT, syscall.SIGTERM)
 
