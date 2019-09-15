@@ -17,5 +17,5 @@ test: format lint vet
 	$(GO) test $($(GO) list ./...) -coverprofile=cover.out
 
 cover: test
-	$(GO) tool cover -html=cover.out -o coverage.html
+	$(GO) tool cover -html=cover.out -o cover.html
 
