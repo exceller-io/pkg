@@ -1,4 +1,3 @@
-// =========================================================================
 // Copyright ©  2019 AppsByRam authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// =========================================================================
+
 package http
 
 import (
@@ -35,18 +34,18 @@ const (
 	contentTypeHeader = "Content-Type"
 )
 
-//Payload represents an generic interface to read and write data from http
+//Payload represents an generic interface to read and write data from HTTP Request or Response
 type Payload interface {
 	RequestReader
 	ResponseReadWriter
 }
 
-//RequestReader request reader
+//RequestReader represents a generic interface to read from HTTP Request
 type RequestReader interface {
 	ReadRequest(contentType string, data interface{}, r *http.Request) error
 }
 
-//ResponseReadWriter response read writer
+//ResponseReadWriter represents a generic interface to read from and write to HTTP Response
 type ResponseReadWriter interface {
 	WriteResponse(contentType string, status int, data interface{}, w http.ResponseWriter)
 	ReadResponse(contentType string, data interface{}, response *http.Response) error
@@ -55,16 +54,35 @@ type ResponseReadWriter interface {
 type payloadImpl struct {
 }
 
-//NewPayload initializes a new payload
+//NewPayload returns a new instance of Payload
 func NewPayload() Payload {
 	return &payloadImpl{}
 }
 
-//Write JSON data with status code to response
+//WriteResponse used to send some payload over the wire as HTTP response
+//WriteResponse accepts Content-Type (json|yaml|xml), http status code and instance of any struct that represents
+//payload you want to send over the wire via HTTP Response
+// Example:
+// type SomeModel struct {
+//    //fields
+//}
+//
+//func getHandler() http.HandlerFunc {
+//    return func (w http.ResponseWriter, r *http.Request) {
+//        var model SomeModel
+//
+//        //retrieve data from DB
+//
+//        //Setup your model
+//
+//        //Write to response
+//        p := ws.NewPayload()
+//        err := p.WriteResponse(ws.ContentTypeJSON, http.StatusOK, &mode, w)
+//    }
+//}
 func (p *payloadImpl) WriteResponse(contentType string, status int, data interface{}, w http.ResponseWriter) {
 	fmt.Printf("HTTP Status : %v Content-Type: %s", status, contentType)
 
-	//write to response
 	w.Header().Set(contentTypeHeader, contentType)
 	w.WriteHeader(status)
 	switch contentType {
@@ -88,6 +106,32 @@ func (p *payloadImpl) WriteResponse(contentType string, status int, data interfa
 	}
 }
 
+//ReadResponse is used to read data from HTTP response and return an instance of struct that represents the data
+//received via HTTP response.
+//Example:
+// type SomeModel struct {
+//    //fields
+//}
+//
+//func postHandler() http.HandlerFunc {
+//    return func (w http.ResponseWriter, r *http.Request) {
+//        var model SomeModel
+//
+//        //setup request
+//
+//        //setup http client
+//
+//        //make the call
+//        resp, err := client.Do(req)
+//
+//        //Handle error if required
+//
+//        //read response
+//        p := ws.NewPayload()
+//        err := p.ReadResponse(ws.ContentTypeJSON, &model, resp)
+//        //Handle error if required
+//    }
+//}
 func (p *payloadImpl) ReadResponse(contentType string, data interface{}, response *http.Response) error {
 	fmt.Println("Reading response body")
 	defer response.Body.Close()
@@ -123,6 +167,22 @@ func (p *payloadImpl) ReadResponse(contentType string, data interface{}, respons
 	return nil
 }
 
+//ReadRequest reads payloaded posted via HTTP request and returns instance of struct that represents the payload
+//Example:
+// type SomeModel struct {
+//    //fields
+//}
+//
+//func postHandler() http.HandlerFunc {
+//    return func (w http.ResponseWriter, r *http.Request) {
+//        var model SomeModel
+//
+//        p := ws.NewPayload()
+//        err := p.ReadRequest(ws.ContentTypeJSON, &model, r)
+//
+//        //Handle error if required
+//    }
+//}
 func (p *payloadImpl) ReadRequest(contentType string, data interface{}, r *http.Request) error {
 	//read headers from request
 	defer r.Body.Close()
