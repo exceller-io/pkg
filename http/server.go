@@ -64,7 +64,7 @@ func (s *server) Start() {
 			err = s.ListenAndServe()
 		}
 		if err != nil {
-			fmt.Printf("Listen and serve: %v", err)
+			fmt.Printf("Listen and serve: %v \n", err)
 		}
 		done <- true
 	}()
@@ -84,10 +84,10 @@ func (s *server) waitShutdown() {
 	//Wait interrupt or shutdown request through /shutdown
 	select {
 	case sig := <-irqSig:
-		fmt.Printf("Shutdown request (signal: %v)", sig)
+		fmt.Printf("\n Shutdown request (signal: %v)\n", sig)
 	}
 
-	fmt.Printf("Stopping server ...")
+	fmt.Printf("Stopping server ...\n")
 
 	//Create shutdown context with 10 second timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
