@@ -43,7 +43,7 @@ func newRouter(routes Routes) *mux.Router {
 	//add metrics route
 	router.
 		Methods("GET").
-		Path("metrics").
+		Path("/metrics").
 		Name("metrics").
 		Handler(metrics.PrometheusHandler())
 	return router
