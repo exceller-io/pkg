@@ -18,7 +18,7 @@ package http
 import (
 	"net/http"
 
-	"github.com/appsbyram/pkg/metrics"
+	"github.com/exceller-io/pkg/metrics"
 	"github.com/gorilla/mux"
 )
 

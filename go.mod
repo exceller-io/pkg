@@ -1,6 +1,6 @@
-module github.com/appsbyram/pkg
+module github.com/exceller-io/pkg
 
-go 1.12
+go 1.16
 
 require (
 	github.com/gorilla/mux v1.7.3
